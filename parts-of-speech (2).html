@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parts of Speech — Talha's Notes</title>
+<style>
+  :root{
+    --bg:#000000;
+    --panel:rgba(255,255,255,0.055);
+    --border:rgba(255,255,255,0.12);
+    --text:#f5f5f7;
+    --dim:#98989d;
+    --dim2:#6e6e73;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 20% -10%, rgba(255,255,255,0.10), transparent 45%),
+      radial-gradient(circle at 90% 10%, rgba(255,255,255,0.06), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    overflow-x:hidden;
+  }
+  ::selection{ background:rgba(255,255,255,0.25); }
+
+  .hero{ padding:80px 24px 40px; text-align:center; }
+  .hero .eyebrow{ font-size:15px; color:var(--dim); margin-bottom:10px; }
+  .hero h1{
+    font-size:clamp(38px,8vw,72px); font-weight:700; letter-spacing:-0.03em; line-height:1.02; margin:0;
+    background:linear-gradient(180deg,#ffffff 0%, #b9b9be 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .hero p.sub{ max-width:560px; margin:18px auto 0; color:var(--dim); font-size:17px; line-height:1.5; }
+
+  .tabbar-wrap{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:50;
+    display:flex; justify-content:center; padding:14px 16px;
+    background:rgba(0,0,0,0.4); backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+    border-bottom:1px solid var(--border);
+  }
+  .tabbar{
+    display:flex; gap:4px; background:rgba(255,255,255,0.06); border:1px solid var(--border);
+    padding:4px; border-radius:980px; overflow-x:auto; max-width:100%; scrollbar-width:none;
+  }
+  .tabbar::-webkit-scrollbar{display:none;}
+  .tab{
+    appearance:none; border:none; background:transparent; color:var(--dim); font-size:13.5px; font-weight:590;
+    padding:9px 16px; border-radius:980px; cursor:pointer; white-space:nowrap; transition:color .25s ease, background .25s ease;
+  }
+  .tab.active{ color:#000; background:#fff; box-shadow:0 1px 8px rgba(255,255,255,0.25); }
+
+  main{ max-width:900px; margin:0 auto; padding:44px 20px 100px; }
+  section.pos-section{ display:none; }
+  section.pos-section.active{ display:block; animation:rise .5s cubic-bezier(.16,1,.3,1); }
+  @keyframes rise{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px; flex-wrap:wrap; gap:8px; }
+  .section-head h2{ font-size:30px; font-weight:700; letter-spacing:-0.02em; margin:0; }
+  .section-head .count{ color:var(--dim2); font-size:13px; }
+  .lede{ color:var(--dim); font-size:15.5px; margin:6px 0 22px; line-height:1.5; }
+
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    padding:26px 28px; margin-bottom:20px; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  }
+  .card h3{ font-size:13px; color:var(--dim); margin:0 0 16px; font-weight:590; }
+
+  .type-list{ display:flex; flex-direction:column; gap:12px; }
+  .type-item{ padding:14px 16px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,0.03); }
+  .type-item .num{ color:var(--dim2); font-size:11.5px; }
+  .type-item .name{ font-weight:650; font-size:15.5px; margin:2px 0 4px; letter-spacing:-0.01em; }
+  .type-item .desc{ color:var(--dim); font-size:13.5px; line-height:1.55; }
+  .type-item .eg{ color:#cfcfd4; font-size:12.5px; margin-top:7px; }
+  .type-item .eg b{ color:#fff; font-weight:600; }
+
+  .divider{ display:flex; align-items:center; gap:14px; margin:34px 0 22px; color:var(--dim2); font-size:12px; }
+  .divider .l{ flex:1; height:1px; background:var(--border); }
+
+  .passage{ font-size:17px; line-height:1.75; color:#e4e4e7; }
+  .passage .title-line{ font-size:20px; font-weight:700; color:var(--text); display:block; margin-bottom:10px; letter-spacing:-0.01em; }
+  mark{ background:none; color:#fff; font-weight:650; border-bottom:2px solid rgba(255,255,255,0.55); padding:0 1px; }
+  mark.k2{ border-bottom-color:rgba(255,255,255,0.28); font-weight:600; }
+  mark.k3{ border-bottom-style:dotted; }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .chip{ font-size:12px; color:var(--dim); border:1px solid var(--border); padding:5px 12px; border-radius:980px; display:flex; align-items:center; gap:6px; }
+  .dot{width:7px;height:7px;border-radius:50%;background:#fff;}
+  .dot.d2{background:var(--dim);}
+  .dot.d3{background:var(--dim2);}
+
+  table{ width:100%; border-collapse:collapse; font-size:14.5px; }
+  thead th{ text-align:left; color:var(--dim2); font-weight:590; font-size:12.5px; padding:0 12px 10px; border-bottom:1px solid var(--border); white-space:nowrap; }
+  tbody td{ padding:12px 12px; border-bottom:1px solid rgba(255,255,255,0.06); color:#e4e4e7; vertical-align:top; }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(255,255,255,0.035);}
+  td.word{font-weight:650; color:#fff; white-space:nowrap;}
+  td.dim{color:var(--dim);}
+  .badge{ display:inline-block; font-size:11.5px; padding:3px 9px; border-radius:980px; border:1px solid var(--border); color:var(--dim); margin:2px 4px 2px 0; white-space:nowrap; }
+  .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+
+  .note{ margin-top:16px; padding:14px 18px; border-radius:14px; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--dim); font-size:13.5px; line-height:1.6; }
+
+  footer{ text-align:center; padding:60px 20px 50px; color:var(--dim2); }
+  footer .mark{ font-size:19px; font-weight:650; color:var(--text); letter-spacing:-0.01em; margin-bottom:6px; }
+  footer .sub{ font-size:12.5px; }
+  footer .line{ width:36px;height:1px;background:var(--border); margin:22px auto; }
+
+  @media (prefers-reduced-motion: reduce){ section.pos-section.active{ animation:none; } }
+  @media (max-width:600px){ .card{ padding:20px 18px; } .passage{ font-size:15.5px; } }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="eyebrow">University Notes · English Grammar</div>
+    <h1>Parts of Speech</h1>
+    <p class="sub">All eight parts of speech, every type written down, worked through with real practice paragraphs — organized for tomorrow's quiz.</p>
+  </div>
+
+  <div class="tabbar-wrap">
+    <div class="tabbar" id="tabbar">
+      <button class="tab active" data-target="nouns">Nouns</button>
+      <button class="tab" data-target="pronouns">Pronouns</button>
+      <button class="tab" data-target="verbs">Verbs</button>
+      <button class="tab" data-target="adjectives">Adjectives</button>
+      <button class="tab" data-target="adverbs">Adverbs</button>
+      <button class="tab" data-target="prepositions">Prepositions</button>
+      <button class="tab" data-target="conjunctions">Conjunctions</button>
+      <button class="tab" data-target="interjection">Interjection</button>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ================= NOUNS ================= -->
+    <section class="pos-section active" id="nouns">
+      <div class="section-head"><h2>Noun</h2><span class="count">8 types</span></div>
+      <p class="lede">Naming words.</p>
+
+      <div class="card">
+        <h3>Types</h3>
+        <div class="type-list">
+          <div class="type-item"><div class="num">01</div><div class="name">Countable Noun</div><div class="desc">Can be counted, one by one.</div></div>
+          <div class="type-item"><div class="num">02</div><div class="name">Uncountable Noun</div><div class="desc">Cannot be counted individually.</div><div class="eg">Eg: <b>hairs, stars</b></div></div>
+          <div class="type-item"><div class="num">03</div><div class="name">Proper Noun</div><div class="desc">The specific name of a person, place, or thing.</div></div>
+          <div class="type-item"><div class="num">04</div><div class="name">Common Noun</div><div class="desc">A general name for a person, place, or thing.</div></div>
+          <div class="type-item"><div class="num">05</div><div class="name">Abstract Noun</div><div class="desc">A feeling or emotion — cannot be touched.</div><div class="eg">Eg: <b>happy</b></div></div>
+          <div class="type-item"><div class="num">06</div><div class="name">Concrete Noun</div><div class="desc">Something that can be seen or touched.</div><div class="eg">Eg: <b>gold, table</b></div></div>
+          <div class="type-item"><div class="num">07</div><div class="name">Material Noun</div><div class="desc">Made up of a substance or material.</div></div>
+          <div class="type-item"><div class="num">08</div><div class="name">Collective Noun</div><div class="desc">Refers to a whole group as one unit.</div></div>
+        </div>
+      </div>
+
+      <div class="divider"><span class="l"></span>PRACTICE PARAGRAPH<span class="l"></span></div>
+
+      <div class="card">
+        <div class="passage">
+          There are a lot of <mark>stars</mark> in the <mark>sky</mark>. I feel happy when I see the <mark>stars</mark>. <mark>Quaid‑e‑Azam</mark> is a great <mark>leader</mark> and <mark>Allama Iqbal</mark> is our national <mark>poet</mark>. <mark>Gold</mark> is made up of different <mark>items</mark>. He have a <mark>collection</mark> of <mark>clothes</mark> in a <mark>cupboard</mark>.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>#</th><th>Noun</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">1</td><td class="word">stars</td><td><span class="badge">Common</span><span class="badge">Concrete</span><span class="badge">Countable</span></td></tr>
+            <tr><td class="dim">2</td><td class="word">sky</td><td><span class="badge">Common</span><span class="badge">Concrete</span><span class="badge">Countable</span></td></tr>
+            <tr><td class="dim">3</td><td class="word">Quaid‑e‑Azam</td><td><span class="badge">Proper</span></td></tr>
+            <tr><td class="dim">4</td><td class="word">leader</td><td><span class="badge">Common</span><span class="badge">Countable</span></td></tr>
+            <tr><td class="dim">5</td><td class="word">Allama Iqbal</td><td><span class="badge">Proper</span></td></tr>
+            <tr><td class="dim">6</td><td class="word">poet</td><td><span class="badge">Common</span><span class="badge">Countable</span></td></tr>
+            <tr><td class="dim">7</td><td class="word">Gold</td><td><span class="badge">Material</span><span class="badge">Uncountable</span></td></tr>
+            <tr><td class="dim">8</td><td class="word">items</td><td><span class="badge">Common</span><span class="badge">Countable</span></td></tr>
+            <tr><td class="dim">9</td><td class="word">collection</td><td><span class="badge">Collective</span></td></tr>
+            <tr><td class="dim">10</td><td class="word">clothes</td><td><span class="badge">Common</span><span class="badge">Countable</span></td></tr>
+            <tr><td class="dim">11</td><td class="word">cupboard</td><td><span class="badge">Common</span><span class="badge">Countable</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>A Journey to Lahore</h3>
+        <div class="passage">
+          <span class="title-line">A Journey to Lahore</span>
+          Last <mark>Sunday</mark>, I visited the beautiful <mark>city</mark> of <mark>Lahore</mark> with my <mark>family</mark>. I started the <mark>journey</mark> early in the <mark>morning</mark> and reached Lahore after 3 <mark>hours</mark>. On my <mark>way</mark>, I saw many <mark>trees</mark>, <mark>flowers</mark>, <mark>mountains</mark>, and <mark>schools</mark>. I felt great <mark>happiness</mark> and <mark>excitement</mark> while learning about the brave <mark>people</mark> who had worked for the <mark>freedom</mark> of the <mark>country</mark>. In the <mark>evening</mark>, the <mark>family</mark> sat in a small <mark>restaurant</mark> and enjoyed delicious <mark>food</mark> and <mark>rice</mark>.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>#</th><th>Noun</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">1</td><td class="word">Sunday</td><td><span class="badge">Proper</span></td></tr>
+            <tr><td class="dim">2</td><td class="word">Lahore</td><td><span class="badge">Proper</span></td></tr>
+            <tr><td class="dim">3</td><td class="word">city</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">4</td><td class="word">family</td><td><span class="badge">Collective</span></td></tr>
+            <tr><td class="dim">5</td><td class="word">journey</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">6</td><td class="word">morning</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">7</td><td class="word">hours</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">8</td><td class="word">way</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">9</td><td class="word">trees</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">10</td><td class="word">flowers</td><td><span class="badge">Common</span><span class="badge">Collective</span></td></tr>
+            <tr><td class="dim">11</td><td class="word">mountains</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">12</td><td class="word">schools</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">13</td><td class="word">happiness</td><td><span class="badge">Abstract</span></td></tr>
+            <tr><td class="dim">14</td><td class="word">excitement</td><td><span class="badge">Abstract</span></td></tr>
+            <tr><td class="dim">15</td><td class="word">people</td><td><span class="badge">Abstract</span></td></tr>
+            <tr><td class="dim">16</td><td class="word">freedom</td><td><span class="badge">Abstract</span></td></tr>
+            <tr><td class="dim">17</td><td class="word">country</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">18</td><td class="word">evening</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">19</td><td class="word">family</td><td><span class="badge">Collective</span></td></tr>
+            <tr><td class="dim">20</td><td class="word">restaurant</td><td><span class="badge">Common</span></td></tr>
+            <tr><td class="dim">21</td><td class="word">food</td><td><span class="badge">Uncountable</span></td></tr>
+            <tr><td class="dim">22</td><td class="word">rice</td><td><span class="badge">Uncountable</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PRONOUNS ================= -->
+    <section class="pos-section" id="pronouns">
+      <div class="section-head"><h2>Pronoun</h2><span class="count">7 types</span></div>
+      <p class="lede">Words which we use instead of a noun.</p>
+
+      <div class="card">
+        <h3>Types</h3>
+        <div class="type-list">
+          <div class="type-item"><div class="num">01</div><div class="name">Personal Pronoun</div><div class="eg">Eg: <b>he, she, they, we</b></div></div>
+          <div class="type-item"><div class="num">02</div><div class="name">Demonstrative Pronoun</div><div class="eg">Eg: <b>that, this, those, these, it</b></div></div>
+          <div class="type-item"><div class="num">03</div><div class="name">Relative Pronoun</div><div class="desc">All the "wh‑" words.</div><div class="eg">Eg: <b>who, whom, where, which</b></div></div>
+          <div class="type-item"><div class="num">04</div><div class="name">Possessive Pronoun</div><div class="eg">Eg: <b>Ali's pen · This book is mine</b></div></div>
+          <div class="type-item"><div class="num">05</div><div class="name">Reflexive Pronoun</div><div class="desc">In which we use "self".</div><div class="eg">Eg: <b>myself, himself</b></div></div>
+          <div class="type-item"><div class="num">06</div><div class="name">Reciprocal Pronoun</div><div class="eg">Eg: <b>everyone, each other, one and only</b></div></div>
+          <div class="type-item"><div class="num">07</div><div class="name">Interrogative Pronoun</div><div class="desc">Questioning sentences.</div><div class="eg">Eg: <b>Who is Ali?</b></div></div>
+        </div>
+      </div>
+
+      <div class="divider"><span class="l"></span>PRACTICE PARAGRAPH<span class="l"></span></div>
+
+      <div class="card">
+        <div class="passage">
+          <span class="title-line">A Trip to the Library</span>
+          Yesterday Sara went to the library because <mark>she</mark> wanted to find a book for <mark>her</mark> Urdu assignment. When <mark>she</mark> entered the library <mark>she</mark> saw <mark>her</mark> friend Ali. <mark>Who</mark> was looking for a book too. He asked <mark>her</mark>, "<mark>Which</mark> book are <mark>you</mark> searching for?" Sara replied, "<mark>I</mark> read <mark>something</mark> <mark>that</mark> explains grammar."
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>#</th><th>Pronoun</th><th>Type</th><th>Refers to / use</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">1</td><td class="word">she</td><td><span class="badge">Personal</span></td><td>Sara</td></tr>
+            <tr><td class="dim">2</td><td class="word">her</td><td><span class="badge">Possessive</span></td><td>Sara's assignment</td></tr>
+            <tr><td class="dim">3</td><td class="word">she</td><td><span class="badge">Personal</span></td><td>Sara</td></tr>
+            <tr><td class="dim">4</td><td class="word">she</td><td><span class="badge">Personal</span></td><td>Sara</td></tr>
+            <tr><td class="dim">5</td><td class="word">her</td><td><span class="badge">Possessive</span></td><td>Sara's friend (Ali)</td></tr>
+            <tr><td class="dim">6</td><td class="word">Who</td><td><span class="badge">Relative</span></td><td>Ali</td></tr>
+            <tr><td class="dim">7</td><td class="word">her</td><td><span class="badge">Personal (object)</span></td><td>Sara</td></tr>
+            <tr><td class="dim">8</td><td class="word">Which</td><td><span class="badge">Interrogative</span></td><td>asks about the book</td></tr>
+            <tr><td class="dim">9</td><td class="word">you</td><td><span class="badge">Personal</span></td><td>Sara, addressed by Ali</td></tr>
+            <tr><td class="dim">10</td><td class="word">I</td><td><span class="badge">Personal</span></td><td>Sara</td></tr>
+            <tr><td class="dim">11</td><td class="word">something</td><td><span class="badge">Indefinite</span></td><td>the book Sara read</td></tr>
+            <tr><td class="dim">12</td><td class="word">that</td><td><span class="badge">Demonstrative</span></td><td>refers to "something"</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VERBS ================= -->
+    <section class="pos-section" id="verbs">
+      <div class="section-head"><h2>Verb</h2><span class="count">6 types</span></div>
+      <p class="lede">Action, or state of being. Without a verb we cannot make a sentence.</p>
+
+      <div class="card">
+        <h3>Types</h3>
+        <div class="type-list">
+          <div class="type-item"><div class="num">01</div><div class="name">Modal Verb</div><div class="desc">Expresses possibility, permission, or order.</div></div>
+          <div class="type-item"><div class="num">02</div><div class="name">Regular Verb</div><div class="desc">Forms the past tense with "‑ed" / "‑d".</div></div>
+          <div class="type-item"><div class="num">03</div><div class="name">Irregular Verb</div><div class="desc">The form changes completely.</div></div>
+          <div class="type-item"><div class="num">04</div><div class="name">Helping Verb</div><div class="desc">Supports the main verb (is, has, was…).</div></div>
+          <div class="type-item"><div class="num">05</div><div class="name">Transitive Verb</div><div class="eg">Eg: <b>I am going to buy a car</b></div></div>
+          <div class="type-item"><div class="num">06</div><div class="name">Intransitive Verb</div><div class="desc">Actioned, but can't be touched.</div><div class="eg">Eg: <b>She is crying</b></div></div>
+        </div>
+        <div class="note">Base form → past → perfect: <b>go</b> (present) → <b>went</b> (past) → <b>gone</b> (perfect). Bonus from the same notes — three tenses: past, present, future.</div>
+      </div>
+
+      <div class="divider"><span class="l"></span>PRACTICE PARAGRAPH<span class="l"></span></div>
+
+      <div class="card">
+        <h3>Paragraph — Ayesha</h3>
+        <div class="passage">
+          Ayesha <mark>walks</mark> to school every morning and <mark>carries</mark> a small bag. She <mark>is studying</mark> English because she <mark>wants</mark> to <mark>improve</mark> her speaking skills. Her teacher <mark>can help</mark> her with difficult words, and Ayesha <mark>should practice</mark> every day. Yesterday, she <mark>wrote</mark> a short story and <mark>gave</mark> it to her teacher. The teacher <mark>smiled</mark> and <mark>praised</mark> her.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>Verb</th><th>Type</th><th>Tense / form</th></tr></thead>
+          <tbody>
+            <tr><td class="word">walks</td><td class="dim">Regular</td><td>Present simple</td></tr>
+            <tr><td class="word">carries</td><td class="dim">Regular, Transitive</td><td>Present simple</td></tr>
+            <tr><td class="word">is studying</td><td class="dim">Helping + Regular</td><td>Present continuous</td></tr>
+            <tr><td class="word">wants</td><td class="dim">Regular</td><td>Present simple</td></tr>
+            <tr><td class="word">improve</td><td class="dim">Regular, Transitive</td><td>Base form (infinitive)</td></tr>
+            <tr><td class="word">can help</td><td class="dim">Modal + base</td><td>Ability / possibility</td></tr>
+            <tr><td class="word">should practice</td><td class="dim">Modal + base</td><td>Advice / obligation</td></tr>
+            <tr><td class="word">wrote</td><td class="dim">Irregular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">gave</td><td class="dim">Irregular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">smiled</td><td class="dim">Regular, Intransitive</td><td>Past simple</td></tr>
+            <tr><td class="word">praised</td><td class="dim">Regular, Transitive</td><td>Past simple</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Paragraph — Hassan</h3>
+        <div class="passage">
+          Every morning, Hassan <mark>wakes</mark> up early and <mark>prepares</mark> himself for college. He usually <mark>walks</mark> to the bus stop, but today he <mark>is waiting</mark> for his friend because they <mark>are going</mark> to <mark>attend</mark> an important seminar. Hassan <mark>can speak</mark> English confidently, and he <mark>should practice</mark> regularly to <mark>improve</mark> his communication skills. Yesterday, he <mark>completed</mark> his assignment, <mark>checked</mark> it carefully, and <mark>submitted</mark> it to his teacher. His teacher <mark>praised</mark> him because he <mark>had worked</mark> very hard. While Hassan <mark>was returning</mark> home, he <mark>saw</mark> a little boy who <mark>was crying</mark> near the road. Hassan <mark>stopped</mark>, <mark>helped</mark> the boy, and <mark>called</mark> his parents. The boy <mark>thanked</mark> him and <mark>smiled</mark> happily. Hassan <mark>felt</mark> proud because he <mark>had done</mark> something kind for another person.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>Verb</th><th>Type</th><th>Tense / form</th></tr></thead>
+          <tbody>
+            <tr><td class="word">wakes</td><td class="dim">Regular</td><td>Present simple</td></tr>
+            <tr><td class="word">prepares</td><td class="dim">Regular, Transitive</td><td>Present simple</td></tr>
+            <tr><td class="word">walks</td><td class="dim">Regular, Intransitive</td><td>Present simple</td></tr>
+            <tr><td class="word">is waiting</td><td class="dim">Helping + Regular</td><td>Present continuous</td></tr>
+            <tr><td class="word">are going</td><td class="dim">Helping + Irregular</td><td>Present continuous</td></tr>
+            <tr><td class="word">attend</td><td class="dim">Regular, Transitive</td><td>Base form (infinitive)</td></tr>
+            <tr><td class="word">can speak</td><td class="dim">Modal + base</td><td>Ability</td></tr>
+            <tr><td class="word">should practice</td><td class="dim">Modal + base</td><td>Advice</td></tr>
+            <tr><td class="word">improve</td><td class="dim">Regular, Transitive</td><td>Base form (infinitive)</td></tr>
+            <tr><td class="word">completed</td><td class="dim">Regular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">checked</td><td class="dim">Regular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">submitted</td><td class="dim">Regular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">praised</td><td class="dim">Regular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">had worked</td><td class="dim">Helping + Regular</td><td>Past perfect</td></tr>
+            <tr><td class="word">was returning</td><td class="dim">Helping + Regular, Intransitive</td><td>Past continuous</td></tr>
+            <tr><td class="word">saw</td><td class="dim">Irregular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">was crying</td><td class="dim">Helping + Regular, Intransitive</td><td>Past continuous</td></tr>
+            <tr><td class="word">stopped</td><td class="dim">Regular, Intransitive</td><td>Past simple</td></tr>
+            <tr><td class="word">helped</td><td class="dim">Regular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">called</td><td class="dim">Regular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">thanked</td><td class="dim">Regular, Transitive</td><td>Past simple</td></tr>
+            <tr><td class="word">smiled</td><td class="dim">Regular, Intransitive</td><td>Past simple</td></tr>
+            <tr><td class="word">felt</td><td class="dim">Irregular</td><td>Past simple</td></tr>
+            <tr><td class="word">had done</td><td class="dim">Helping + Irregular, Transitive</td><td>Past perfect</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ADJECTIVES ================= -->
+    <section class="pos-section" id="adjectives">
+      <div class="section-head"><h2>Adjective</h2><span class="count">8 types</span></div>
+      <p class="lede">The quality of a noun or subject. "He is a brave boy."</p>
+
+      <div class="card">
+        <h3>Types</h3>
+        <div class="type-list">
+          <div class="type-item"><div class="num">01</div><div class="name">Demonstrative Adjective</div><div class="desc">Points to a specific noun.</div><div class="eg">Eg: <b>this, that, those, these</b> — "This bag is mine." "Those chairs are old."</div></div>
+          <div class="type-item"><div class="num">02</div><div class="name">Descriptive Adjective</div><div class="desc">Describes the quality, kind, or condition of a noun.</div><div class="eg">Eg: <b>a beautiful village, a yellow bus, fresh air</b></div></div>
+          <div class="type-item"><div class="num">03</div><div class="name">Possessive Adjective</div><div class="desc">Shows ownership or belonging.</div><div class="eg">Eg: <b>my, our, your, his, her, its, their</b> — "Our school." "Her camera." "My best friend."</div></div>
+          <div class="type-item"><div class="num">04</div><div class="name">Quantitative Adjective</div><div class="desc">Tells "how much", or a general (not exact) amount.</div><div class="eg">Eg: <b>some, many, several, enough, much, little, each, every</b> — "Several instructions." "Enough time." "Many paintings."</div></div>
+          <div class="type-item"><div class="num">05</div><div class="name">Numerical Adjective</div><div class="desc">Tells the exact number or order of nouns.</div><div class="eg">Eg: <b>one, two, twenty, first, second</b> — "Twenty students." "Three teachers." "Two hours."</div></div>
+          <div class="type-item"><div class="num">06</div><div class="name">Interrogative Adjective</div><div class="desc">Used before a noun to ask a question.</div><div class="eg">Eg: <b>what, which, whose</b> (only when directly followed by a noun) — "Which village did you visit?" "Whose bag is this?"</div></div>
+          <div class="type-item"><div class="num">07</div><div class="name">Comparative Adjective</div><div class="desc">Compares two nouns — usually ends in "‑er" or uses "more".</div><div class="eg">Eg: "This garden was bigger than the museum." "Sara's camera was newer than mine."</div></div>
+          <div class="type-item"><div class="num">08</div><div class="name">Superlative Adjective</div><div class="desc">Compares three or more nouns, showing the highest degree.</div><div class="eg">Eg: "Sara is my best friend."</div></div>
+        </div>
+      </div>
+
+      <div class="divider"><span class="l"></span>PRACTICE PARAGRAPH<span class="l"></span></div>
+
+      <div class="card">
+        <div class="passage">
+          Last Sunday, <mark class="k3">our</mark> school arranged a <mark>wonderful</mark> <mark>educational</mark> trip to a <mark>beautiful</mark> <mark>historical</mark> village near the city. <mark class="k2">Twenty</mark> students and <mark class="k2">three</mark> teachers left the school early in the morning in a <mark>large</mark> <mark>yellow</mark> bus. Each student carried a <mark>small</mark> bag, a water bottle, and <mark class="k2">some</mark> <mark>healthy</mark> food for the journey. <mark class="k3">Our</mark> <mark>kind</mark> teacher, Mr. Ahmed, gave us <mark class="k2">several</mark> <mark>useful</mark> instructions before we started <mark class="k3">our</mark> <mark>exciting</mark> journey. He told us to stay together and take care of <mark class="k3">our</mark> <mark>personal</mark> belongings. After <mark class="k2">two</mark> hours, we reached a <mark>peaceful</mark> village surrounded by <mark>green</mark> fields and <mark>tall</mark> trees. The <mark>fresh</mark> air and <mark>cool</mark> weather made everyone <mark>happy</mark>. We visited an <mark>old</mark> museum where we saw <mark class="k2">many</mark> <mark>interesting</mark> paintings, <mark>ancient</mark> coins, and <mark>beautiful</mark> <mark>wooden</mark> chairs. A <mark>friendly</mark> guide showed us <mark>different</mark> rooms and told us <mark>amazing</mark> stories about the <mark>brave</mark> people who had lived there <mark class="k2">many</mark> years ago. <mark class="k2">Some</mark> students asked <mark>difficult</mark> questions, while <mark>other</mark> students carefully listened to the guide. After the museum visit, we walked towards a <mark>large</mark> garden with <mark>colorful</mark> flowers and <mark>soft</mark> grass. The teachers gave us <mark class="k2">enough</mark> time to enjoy the <mark>natural</mark> beauty of the place. <mark class="k3">My</mark> <mark>best</mark> friend, Sara, took <mark class="k2">many</mark> <mark>lovely</mark> pictures with <mark class="k3">her</mark> <mark>new</mark> camera. At lunchtime, we sat under a <mark>huge</mark> tree and shared <mark class="k3">our</mark> <mark>delicious</mark> food with one another. Every student enjoyed the <mark>tasty</mark> sandwiches, <mark>fresh</mark> fruit, and <mark>cold</mark> drinks. In the afternoon, we played <mark class="k2">several</mark> <mark>funny</mark> games and had a <mark>wonderful</mark> time together. Before returning home, each student bought a <mark>small</mark> <mark>traditional</mark> gift from the village market. It was a <mark>memorable</mark> day, and everyone felt <mark>proud</mark> of having such a <mark>useful</mark> and <mark>enjoyable</mark> experience.
+        </div>
+        <div class="legend">
+          <span class="chip"><span class="dot"></span>Descriptive</span>
+          <span class="chip"><span class="dot d2"></span>Quantitative / numerical</span>
+          <span class="chip"><span class="dot d3"></span>Possessive</span>
+        </div>
+        <div class="note">Written with no demonstrative (this, that, these, those) or interrogative (which, what, whose) adjectives — every adjective here is descriptive, quantitative, or possessive.</div>
+      </div>
+    </section>
+
+    <!-- ================= ADVERBS ================= -->
+    <section class="pos-section" id="adverbs">
+      <div class="section-head"><h2>Adverb</h2><span class="count">4 types</span></div>
+      <p class="lede">Tells how, when, or where an action is done.</p>
+      <div class="card">
+        <h3>Types</h3>
+        <div class="type-list">
+          <div class="type-item"><div class="num">01</div><div class="name">Adverb of Manner</div><div class="desc">How the action is performed.</div><div class="eg">Eg: "She moves very <b>quickly</b>."</div></div>
+          <div class="type-item"><div class="num">02</div><div class="name">Adverb of Time</div><div class="desc">When the action happens.</div><div class="eg">Eg: "I will call you <b>tomorrow</b>."</div></div>
+          <div class="type-item"><div class="num">03</div><div class="name">Adverb of Place</div><div class="desc">Where the action happens.</div><div class="eg">Eg: "I will come <b>here</b> again."</div></div>
+          <div class="type-item"><div class="num">04</div><div class="name">Adverb of Frequency</div><div class="desc">How often the action is performed.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PREPOSITIONS ================= -->
+    <section class="pos-section" id="prepositions">
+      <div class="section-head"><h2>Preposition</h2><span class="count">3 types</span></div>
+      <p class="lede">Shows where — the relation between a noun and the rest of the sentence.</p>
+      <div class="card">
+        <h3>Types</h3>
+        <div class="type-list">
+          <div class="type-item"><div class="num">01</div><div class="name">Preposition of Time</div><div class="desc">Describing the time.</div></div>
+          <div class="type-item"><div class="num">02</div><div class="name">Preposition of Movement</div><div class="desc">The movement or change in distance.</div></div>
+          <div class="type-item"><div class="num">03</div><div class="name">Preposition of Place</div><div class="desc">A specific place.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CONJUNCTIONS ================= -->
+    <section class="pos-section" id="conjunctions">
+      <div class="section-head"><h2>Conjunction</h2><span class="count">3 types</span></div>
+      <p class="lede">Joins words, phrases, or sentences.</p>
+      <div class="card">
+        <h3>Types</h3>
+        <div class="type-list">
+          <div class="type-item"><div class="num">01</div><div class="name">Coordinate Conjunction</div><div class="eg">Eg: "Ali <b>and</b> Ahmed."</div></div>
+          <div class="type-item"><div class="num">02</div><div class="name">Subordinate Conjunction</div><div class="desc">Splits further into two kinds:</div>
+            <div class="eg">— <b>Independent</b>: gives a complete meaning on its own.<br>— <b>Dependent</b>: does not give a complete meaning on its own.</div>
+          </div>
+          <div class="type-item"><div class="num">03</div><div class="name">Co‑relative Conjunction</div><div class="desc">Works in a matched pair.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= INTERJECTION ================= -->
+    <section class="pos-section" id="interjection">
+      <div class="section-head"><h2>Interjection</h2></div>
+      <p class="lede">A word which expresses sudden feelings or emotions.</p>
+      <div class="card">
+        <div class="note">No further sub‑types were noted for interjections — just the one definition, straight from the notes.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="line"></div>
+    <div class="mark">Made by Talha</div>
+    <div class="sub">Parts of Speech · University Notes</div>
+  </footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const sections = document.querySelectorAll('.pos-section');
+  tabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      tabs.forEach(t=>t.classList.remove('active'));
+      sections.forEach(s=>s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.target).classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+</script>
+</body>
+</html>
